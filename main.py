@@ -10,14 +10,18 @@ ATTEMPTS = 6
 
 
 def check_guess(user_guess, correct_word):
+    common_chars = set(user_guess) & set(correct_word)
     if user_guess == correct_word:
         print(f"Correct! The word was {''.join(correct_word)}\n"
               f"You guessed with {ATTEMPTS} attempts remaining!")
-    elif set(user_guess) & set(correct_word):
-        print(f"")
+        start()
+    elif common_chars:
+        for i in common_chars:
+            if i in correct_word:
+                print(f"{i} is not in the correct position.")
 
     else:
-        print("")
+        print(f"None of these characters are in the word.")
 
 
 def guess():
@@ -25,7 +29,7 @@ def guess():
     while ATTEMPTS > 0:
         user_guess = input("Guess the word: ")
         with open('valid_words.txt') as f:
-            if user_guess not in f.read():
+            if user_guess.upper() not in f.read():
                 print(f"{user_guess} is not a valid input.")
             else:
                 user_guess_split = [*user_guess]
@@ -36,12 +40,25 @@ def generate_word():
     with open("valid_words.txt") as f:
         lines = f.readlines()
         rand_word = rand.choice(lines)
-        [*rand_word].pop(-1)
-        return [*rand_word]
+        split_word = [*rand_word]
+        split_word.pop(-1)
+        print(split_word)
+        return split_word
 
 
 def start():
-    guess()
+    while True:
+        try:
+            print("\n"
+                  "1. Start Wordle\n"
+                  "            ")
+            choice = int(input("Pick an option: "))
+            if choice == 1:
+                guess()
+        except TypeError:
+            print("Input must be an integer!")
+        else:
+            continue
 
 
 if __name__ == "__main__":
