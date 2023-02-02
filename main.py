@@ -10,18 +10,24 @@ ATTEMPTS = 6
 
 
 def check_guess(user_guess, correct_word):
-    common_chars = set(user_guess) & set(correct_word)
+    global ATTEMPTS
     if user_guess == correct_word:
         print(f"Correct! The word was {''.join(correct_word)}\n"
               f"You guessed with {ATTEMPTS} attempts remaining!")
         start()
-    elif common_chars:
-        for i in common_chars:
-            if i in correct_word:
-                print(f"{i} is not in the correct position.")
+    elif user_guess:
+        for i, letter in enumerate(user_guess):
+            if correct_word[i] == user_guess[i]:
+                print(f"{letter} is in the correct position.")
+            elif letter in correct_word:
+                print(f"{letter} in incorrect position.")
+            else:
+                print(f"{letter} is not in this word.")
+        ATTEMPTS -= 1
 
     else:
         print(f"None of these characters are in the word.")
+        ATTEMPTS -= 1
 
 
 def guess():
@@ -29,11 +35,15 @@ def guess():
     while ATTEMPTS > 0:
         user_guess = input("Guess the word: ")
         with open('valid_words.txt') as f:
-            if user_guess.upper() not in f.read():
-                print(f"{user_guess} is not a valid input.")
+            if len(user_guess.upper()) != 5:
+                print("Input must be 5 characters long!")
+            elif user_guess.upper() not in f.read():
+                print(f"{user_guess.upper()} is not a valid input.")
             else:
-                user_guess_split = [*user_guess]
+                user_guess_split = [*user_guess.upper()]
                 check_guess(user_guess_split, correct_word)
+    print(f"You ran out of attempts!\n The word was {''.join(correct_word)}!")
+    start()
 
 
 def generate_word():
@@ -55,10 +65,10 @@ def start():
             choice = int(input("Pick an option: "))
             if choice == 1:
                 guess()
-        except TypeError:
+        except:
             print("Input must be an integer!")
         else:
-            continue
+            break
 
 
 if __name__ == "__main__":
